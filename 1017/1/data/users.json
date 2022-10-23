@@ -1,0 +1,10 @@
+{
+    "alice": {
+        "name": "alice",
+        "level": 1
+    },
+    "bob": {
+        "name": "bob",
+        "level": 2
+    }
+}
