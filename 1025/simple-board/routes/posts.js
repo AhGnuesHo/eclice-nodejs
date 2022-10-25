@@ -12,9 +12,25 @@ router.get(
       return;
     }
     // post 목록
-    const post = await Post.find({});
+    // pagination
+    // 기본값 1
+    const page = Number(req.query.page || 1);
+    // 기본값 10
+    const perPage = Number(req.query.perPage || 10);
+
+    // 페이지를 가져오는 것과 목록을 출력하는 것은 비동기 동작이지만
+    // 두 동작은 연관이 없으므로 병렬로 수행하기 위해 Promise.all사용
+    const [total, posts] = await Promise.all([
+      Post.countDocuments({}),
+      Post.find({})
+        .skip(perPage * (page - 1))
+        .limit(perPage)
+        .sort({ createdAt: -1 }), // 최근 게시글 순으로 정렬
+    ]);
+    const totalPage = Math.ceil(total / perPage);
+
     // view 에 post내용을 전달
-    res.render("/posts/list", { post });
+    res.render("post/list", { posts, page, perPage, totalPage });
   })
 );
 
